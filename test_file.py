@@ -1,1 +1,3 @@
 "I am just testing this file for this project. This edit is made by Juna Tan.""
+
+""Test edit from group member: Colette Rouiller." 
