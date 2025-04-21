@@ -1,4 +1,8 @@
 ##Jeffrey's algorithm:
+
+hand = ["2D", "4C", "10D", "6D"]
+table = ["7C", "2S", "3D", "1C"]
+
 def match(cards_hand, cards_table):
     matched_dict = {}
     for card1 in cards_hand:
@@ -36,5 +40,7 @@ def match(cards_hand, cards_table):
                                         #Conditional branching: if sum of three cards equals to card in hand
                                         matched_dict[card1] = [card2, other, otherother]
     return matched_dict
+    #returns a dictionary of matched cards with the key as cards from your hand
+    #and the values being the combinations of cards on the table.
                         
-            
+print(match(hand, table))
