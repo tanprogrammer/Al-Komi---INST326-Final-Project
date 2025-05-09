@@ -30,7 +30,18 @@ This website was used to understand the official rules, structure, and gameplay 
 ## Attributions 
 | **Method/Function**           | **Primary Author**    | **Techniques Demonstrated**              |
 |---------------------------|-------------------|--------------------------------------|
-| {Insert here}             | Leighwith Macauley       | {Insert here}                         |
-| {insert here}             | Micheas Kidane    | {Insert here} |
-| {Insert here}             | Colette Rouiller  | {Insert here}      |
-| {Instert here}            | Jeffrey Tan       | {Insert here         |
+| Deck.shuffle_deck()             | Colette Rouiller       | Use of standard library(random.shuffle)                       |
+| deal_cards()           | Colette Rouiller    | Sequence unpacking |
+| match()            | Jeffrey Tan  |  Set operations     |
+|refill          |    Leighwith   | Comprehensions or generator Expressions (list comprenshion)       |
+| evaluate_play()             | Micheas       | f-strings contianing expressions                       |
+| Gamestate.__str__         | Micheas   | magic method |
+| parse_args            | Leighwith  |  ArgumentParser class    |
+|          |       |     |
+|          |       |     |
+|          |       |     |
+|          |       |     |
+|          |       |     |
+|          |       |     |
+|          |       |     |
+|          |       |     |
