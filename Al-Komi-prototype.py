@@ -147,7 +147,9 @@ class Player():
         raise NotImplementedError
     
     def calc_score(self, opponent):
-        self.score += (self.face_up * 10)
+        if self.face_up != 0:
+            self.score += (self.face_up * 10)
+            self.face_up -= (1 * self.face_up)
         if self.face_down > opponent.face_down and self.score >= 40:
             self.score += 30
 
