@@ -89,47 +89,49 @@ def match(cards_hand, cards_table):
     return matched_dict
 
 def evaluate_play(player, played_card, table_cards):
-    if played_card in table_cards:
-        if played_card in player.combo_dict:
+    table_cards_num = []
+    for card in table_cards:
+        table_cards_num.append(card[:-1])
+    if played_card in player.combo_dict:
+        player.cards_in_hand.remove(played_card)
+        for card in player.combo_dict[played_card]:
+            table_cards.remove(card)
+        return player.cards_in_hand, table_cards
+    elif played_card == "7D" or played_card == "JC" or played_card == "JD"\
+    or played_card == "JS" or played_card == "JH":
+        player.cards_in_hand.remove(played_card)
+        table_cards = []
+        return player.cards_in_hand, table_cards
+    else:
+        if played_card[:-1] in table_cards_num:
             player.cards_in_hand.remove(played_card)
-            for card in player.combo_dict[played_card]:
-                table_cards.remove(card)
-            return player.cards_in_hand, table_cards
-        elif played_card == "7D" or played_card == "JC" or played_card == "JD"\
-        or played_card == "JS" or played_card == "JH":
-            player.cards_in_hand.remove(played_card)
-            for _ in table_cards:
-                table_cards.pop()
+            for card in table_cards:
+                if card[:-1] == played_card[:-1]:
+                    table_cards.remove(card)
             return player.cards_in_hand, table_cards
         else:
             player.cards_in_hand.remove(played_card)
-            table_cards.remove(played_card)
+            table_cards.append(played_card)
             return player.cards_in_hand, table_cards
-    else:
-        player.cards_in_hand.remove(played_card)
-        table_cards.append(played_card)
-        return player.cards_in_hand, table_cards
             
 class Gamestate:
     """Game state class."""
-    def __init__(self, players, deck, table_cards, current_turn=0):
+    def __init__(self, players, table_cards, current_turn=0):
         self.players = players
-        self.deck = deck      
         self.table_cards = table_cards  
-        self.current_turn = current_turn  
+        self.current_turn = current_turn
     
     def __str__(self):
         return (
-            f"Current turn: {self.players[self.current_turn]}, "
+            f"Current turn: {self.players[self.current_turn].name}, "
             f"Table cards: {self.table_cards}, "
-            f"Deck size: {len(self.deck.deck_cards)}, "
+            f"{self.players[self.current_turn].name}'s score: {self.players[self.current_turn].score}"
         )
 
     def next_turn(self):
         self.current_turn = (self.current_turn + 1) % len(self.players)
         
-    def update(self, deck, table_cards):
-        self.deck = deck      
+    def update(self, table_cards):
         self.table_cards = table_cards   
 
 class Player():
@@ -146,21 +148,35 @@ class Player():
     
     def calc_score(self, opponent):
         self.score += (self.face_up * 10)
-        if self.face_down > opponent.face_down:
+        if self.face_down > opponent.face_down and self.score >= 40:
             self.score += 30
-    
+
     def determine_komi(self, cards, table_cards):
-        temp_list = table_cards
-        if cards == ["7D"]:
-            self.face_up += 1
-        for card in table_cards:
-            temp_list.remove(card)
-        if len(temp_list) == 0:
-            self.face_up += 1
+        if len(cards) == 1:
+            temp_list = []
+            for card in table_cards:
+                temp_list.append(card[:-1])
+            if cards == ["7D"]:
+                self.face_up += 1
+            elif cards[0][:-1] in temp_list:
+                for value in temp_list:
+                    if str(value) == str(cards[0][:-1]):
+                        temp_list.remove(cards[0][:-1])
+            if len(temp_list) == 0:
+                self.face_up += 1
+        else:
+            temp_list = table_cards.copy()
+            for card in cards:
+                temp_list.remove(card)
+            if len(temp_list) == 0:
+                self.face_up += 1 
     
     def add_face_down(self, played_card, table_cards):
         if played_card in self.combo_dict:
             self.face_down += (1 + len(self.combo_dict[played_card]))
+        if played_card == "JS" or played_card == "JD"\
+        or played_card == "JH" or played_card == "JC":
+            self.face_down += len(table_cards)
         elif played_card[:-1] == "K" or played_card[:-1] == "Q":
             for card in table_cards:
                 if played_card == card:
@@ -173,6 +189,8 @@ class HumanPlayer(Player):
         print(f"Your hand: {self.cards_in_hand}")
         played = input(f"{self.name}, please input the desired card from your "
                        f"hand to play: ")
+        if played == "exit":
+            raise ValueError
         while True:
             if played in self.cards_in_hand:
                 self.determine_komi([played], table_cards)
@@ -249,31 +267,58 @@ class Game:
                     self.table_cards.append(card)
                 else:
                     print("Error.")
-            gamestate.update(self.deck, self.table_cards)
+            gamestate.update(self.table_cards)
+    def refill(self, player):
+        player.cards_in_hand = [self.deck.deck_cards.pop() for _ in range(4)]  
         
     def start(self):
-        gamestate = Gamestate(self.players, self.deck, self.table_cards)
-        while self.player1.score < 70 and self.player2.score < 70:
+        gamestate = Gamestate(self.players, self.table_cards)
+        while self.player1.score < 70 and self.player2.score < 70 and len(self.deck.deck_cards) >= 5:
             if self.players[gamestate.current_turn] == self.player1:
                 played_card = self.player1.turn(gamestate, self.table_cards)
                 self.player1.cards_in_hand, self.table_cards = evaluate_play(self.player1, played_card, self.table_cards)
                 if len(self.table_cards) == 0:
                     self.restart(gamestate)
+                if len(self.player1.cards_in_hand) == 0:
+                    self.refill(self.player1)
                 self.player1.calc_score(self.player2)
-                gamestate.update(self.deck, self.table_cards)
+                gamestate.update(self.table_cards)
                 gamestate.next_turn()
-            if self.players[gamestate.current_turn] == self.player2:
+            elif self.players[gamestate.current_turn] == self.player2:
                 played_card = self.player2.turn(self.table_cards)
                 self.player2.cards_in_hand, self.table_cards = evaluate_play(self.player2, played_card, self.table_cards)
                 if len(self.table_cards) == 0:
                     self.restart(gamestate)
+                if len(self.player2.cards_in_hand) == 0:
+                    self.refill(self.player2)
                 self.player2.calc_score(self.player1)
-                gamestate.update(self.deck, self.table_cards)
+                print(f"{self.player2.name}'s score: {self.player2.score}")
+                gamestate.update(self.table_cards)
                 gamestate.next_turn()
         if self.player1.score >= 70:
             print(f"{self.player1.name} IS THE WINNER!")
+            print(f"{self.player1.name}'s score: {self.player1.score}")
+            print(f"{self.player2.name}'s score: {self.player2.score}")
         elif self.player2.score >= 70:
             print(f"{self.player2.name} IS THE WINNER!")
+            print(f"{self.player1.name}'s score: {self.player1.score}")
+            print(f"{self.player2.name}'s score: {self.player2.score}")
+        else:
+            if self.player1.face_down > self.player2.face_down:
+                self.player1.score += 30
+            else:
+                self.player2.score += 30
+            if self.player1.score > self.player2.score:
+                print(f"{self.player1.name} IS THE WINNER!")
+                print(f"{self.player1.name}'s score: {self.player1.score}")
+                print(f"{self.player2.name}'s score: {self.player2.score}")
+            elif self.player2.score > self.player1.score:
+                print(f"{self.player2.name} IS THE WINNER!")
+                print(f"{self.player1.name}'s score: {self.player1.score}")
+                print(f"{self.player2.name}'s score: {self.player2.score}")
+            else:
+                print("IT'S A TIE!")
+
                 
 def main(name):
     players = []
