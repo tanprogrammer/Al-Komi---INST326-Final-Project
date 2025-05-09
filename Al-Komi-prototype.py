@@ -30,10 +30,10 @@ class Deck:
         '''Deals cards to players and table. 
         '''
         #value error lines 
-        if num_players ==2 or num_players == 1:
-            self.num_players = num_players 
-        else:
+        if num_players != 1:
             raise ValueError("You have inputted an invalid number of players.")
+        else:
+            self.num_players = num_players
         
         #num cards per player/hand    
         hand_size = 4
@@ -64,26 +64,26 @@ class Deck:
 def match(cards_hand, cards_table):
     matched_dict = {}
     for card1 in cards_hand:
-        if card1 != "7D" and card1[0] != "J" and card1[0] != "K" and card1[0]\
+        if card1 != "7D" and card1[:-1] != "J" and card1[:-1] != "K" and card1[:-1]\
             != "Q":
             temp_value = int(card1[:-1])
             for card2 in cards_table:
-                if card2 != "7D" and card2[0] != "J" and card2[0] != "K" and\
-                    card2[0] != "Q":
+                if card2 != "7D" and card2[:-1] != "J" and card2[:-1] != "K" and\
+                    card2[:-1] != "Q":
                     other_cards = list(cards_table)
                     other_cards.remove(card2)
                     if card1[:-1] == card2[:-1]: 
                         matched_dict[card1] = [card2]
                     for other in other_cards:
-                        if other != "7D" and other[0] != "J" and other[0] !=\
-                            "K" and other[0] != "Q":
+                        if other != "7D" and other[:-1] != "J" and other[:-1] !=\
+                            "K" and other[:-1] != "Q":
                             otherother_cards = list(other_cards)
                             otherother_cards.remove(other)
                             if int(card2[:-1]) + int(other[:-1]) == temp_value:
                                 matched_dict[card1] = [card2, other]
                             for otherother in otherother_cards:
-                                if other != "7D" and other[0] != "J" and\
-                                other[0] != "K" and other[0] != "Q":
+                                if otherother != "7D" and otherother[:-1] != "J" and\
+                                otherother[:-1] != "K" and otherother[:-1] != "Q":
                                     if int(card2[:-1]) + int(other[:-1]) + int(otherother[:-1]) == temp_value:
                                         matched_dict[card1] = [card2, other, otherother]
     return matched_dict
@@ -105,7 +105,11 @@ def evaluate_play(player, played_card, table_cards):
             player.cards_in_hand.remove(played_card)
             table_cards.remove(played_card)
             return player.cards_in_hand, table_cards
-
+    else:
+        player.cards_in_hand.remove(played_card)
+        table_cards.append(played_card)
+        return player.cards_in_hand, table_cards
+            
 class Gamestate:
     """Game state class."""
     def __init__(self, players, deck, table_cards, current_turn=0):
@@ -149,7 +153,7 @@ class Player():
         temp_list = table_cards
         if cards == ["7D"]:
             self.face_up += 1
-        for card in cards:
+        for card in table_cards:
             temp_list.remove(card)
         if len(temp_list) == 0:
             self.face_up += 1
@@ -166,13 +170,13 @@ class HumanPlayer(Player):
     def turn(self, gamestate, table_cards):
         self.combo_dict = match(self.cards_in_hand, table_cards)
         print(gamestate)
-        print(self.cards_in_hand)
+        print(f"Your hand: {self.cards_in_hand}")
         played = input(f"{self.name}, please input the desired card from your "
                        f"hand to play: ")
         while True:
             if played in self.cards_in_hand:
                 self.determine_komi([played], table_cards)
-                self.add_face_down(played)
+                self.add_face_down(played, table_cards)
                 return played
             else:
                 print("This card is not in your hand.")
@@ -180,47 +184,49 @@ class HumanPlayer(Player):
                         f"hand to play: ")
                 
 class ComputerPlayer(Player):
-    def __init__(self, robo_name, player_hand):
-        self.name = robo_name
-        self.cards_in_hand = list(player_hand)
-    
     def turn (self, table_cards):
         self.combo_dict = match(self.cards_in_hand, table_cards)
         if "7D" in self.cards_in_hand:
             self.determine_komi(["7D"], table_cards)
+            print(f"{self.name} just played the 7D")
             return "7D"
         elif "JH" in self.cards_in_hand or "JS" in self.cards_in_hand\
         or "JD" in self.cards_in_hand or "JC" in self.cards_in_hand:
             for card1 in self.cards_in_hand:
                 if card1 == "JH" or card1 == "JS" or card1 == "JD"\
                 or card1 == "JC":
-                    self.determine_komi([card1], table_cards)
+                    print(f"{self.name} just played the {card1}")
                     return card1
         else:
             for card2 in self.cards_in_hand:
                 if card2[:-1] == "Q" or card2[:-1] == "K":
                     self.determine_komi([card2], table_cards)
                     self.face_down += 2
+                    print(f"{self.name} just played the {card2}")
                     return card2
         if self.combo_dict != {}:
             for combo in self.combo_dict:
                 if len(self.combo_dict[combo]) == 3:
                     self.determine_komi(self.combo_dict[combo], table_cards)
                     self.face_down += 4
+                    print(f"{self.name} just played the {combo}")
                     return combo
             for combo in self.combo_dict:
                 if len(self.combo_dict[combo]) == 2:
                     self.determine_komi(self.combo_dict[combo], table_cards)
                     self.face_down += 3
+                    print(f"{self.name} just played the {combo}")
                     return combo
             for combo in self.combo_dict:
                 if len(self.combo_dict[combo]) == 1:
                     self.determine_komi(self.combo_dict[combo], table_cards)
                     self.face_down += 2
+                    print(f"{self.name} just played the {combo}")
                     return combo
         else:
-            placed_card = self.cards_in_hand.pop(0)
-            return f"Places {placed_card}"
+            placed_card = self.cards_in_hand[0]
+            print(f"{self.name} just played the {placed_card}")
+            return placed_card
         
 class Game:
     def __init__(self, players, table_cards, deck):
@@ -247,22 +253,21 @@ class Game:
         
     def start(self):
         gamestate = Gamestate(self.players, self.deck, self.table_cards)
-        print(gamestate)
-        while self.player1.score < 70 or self.player2.score < 70:
+        while self.player1.score < 70 and self.player2.score < 70:
             if self.players[gamestate.current_turn] == self.player1:
-                played_card = self.player1.turn(self.table_cards)
-                self.player1.cards_in_hand, self.table_cards = evaluate_play(played_card, self.table_cards)
+                played_card = self.player1.turn(gamestate, self.table_cards)
+                self.player1.cards_in_hand, self.table_cards = evaluate_play(self.player1, played_card, self.table_cards)
                 if len(self.table_cards) == 0:
                     self.restart(gamestate)
-                self.player1.calc_score(self.player2.score)
+                self.player1.calc_score(self.player2)
                 gamestate.update(self.deck, self.table_cards)
                 gamestate.next_turn()
             if self.players[gamestate.current_turn] == self.player2:
                 played_card = self.player2.turn(self.table_cards)
-                self.player2.cards_in_hand, self.table_cards = evaluate_play(played_card, self.table_cards)
+                self.player2.cards_in_hand, self.table_cards = evaluate_play(self.player2, played_card, self.table_cards)
                 if len(self.table_cards) == 0:
                     self.restart(gamestate)
-                self.player2.calc_score(self.player1.score)
+                self.player2.calc_score(self.player1)
                 gamestate.update(self.deck, self.table_cards)
                 gamestate.next_turn()
         if self.player1.score >= 70:
@@ -270,21 +275,16 @@ class Game:
         elif self.player2.score >= 70:
             print(f"{self.player2.name} IS THE WINNER!")
                 
-def main(names):
+def main(name):
     players = []
     deck = Deck()
-    num_players = len(names)
+    num_players = len([name])
     player1_hand, player2_hand, table_cards = deck.deal_cards(num_players)
     if num_players == 1:
-        player = HumanPlayer(names[0], player1_hand)
+        player = HumanPlayer(name, player1_hand)
         com_player = ComputerPlayer("Robot Bob", player2_hand)
         players.append(player)
         players.append(com_player)
-    elif num_players == 2:
-        player1 = HumanPlayer(names[0], player1_hand)
-        player2 = HumanPlayer(names[1], player2_hand)
-        players.append(player1)
-        players.append(player2)
     else:
         ValueError ("Too many players.")
     game = Game(players, table_cards, deck)
@@ -297,16 +297,16 @@ def parse_args(arglist):
     each line consists of a name, a tab character, and a phone number.
     
     Args:
-        names (list of str): a list of player names.
+        name(str): player's name.
         
     Returns:
         argparse.Namespace: a namespace object with a file attribute whose value
         is a path to a text file as described above.
     """
     parser = ArgumentParser()
-    parser.add_argument("names", nargs="*", help="player names")
+    parser.add_argument("name", help="player name")
     return parser.parse_args(arglist)
 
 if __name__ == "__main__":
     args = parse_args(sys.argv[1:])
-    main(args.names)
+    main(args.name)
