@@ -1,7 +1,7 @@
 # Al-Komi Card Game
 
 ## Overview
-Al-Komi is a digital Python-based implementation of a traditional Egyptian card game, redesigned for one human player versus a computer. Players take turns placing cards on the table, attempting to match card values and capture cards. The game ends when the deck is finishes and the first player to reach 70 points wins.
+Al-Komi is a digital Python-based implementation of a traditional Egyptian card game, redesigned for one human player versus a computer. Players take turns placing cards on the table, attempting to match card values and capture cards. The game ends when the deck is finishes or when the first player to reach 70 points wins.
 
 ## Files in Repository
 
@@ -10,7 +10,7 @@ Al-Komi is a digital Python-based implementation of a traditional Egyptian card 
 ##  How to Run the Program 
 From your terminal, navigate to the project folder and run:
 
-_python3 Al_Komi.py_
+_python3 Al_Komi.py {insert name}_
 
 **Note:**  __No command-line arguments are required.__
 
