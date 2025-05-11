@@ -19,6 +19,7 @@ class Deck:
         Args:
             self (Deck): The Deck instance.
         """
+        
         self.deck_cards = [
             '1H', '2H', '3H', '4H', '5H', '6H', '7H', '8H', '9H', '10H', 'JH', 
             'QH', 'KH', '1S', '2S', '3S', '4S', '5S', '6S', '7S', '8S', '9S', 
@@ -569,9 +570,8 @@ def main(name):
     print("- Wild cards clear the table.")
     print("- Player with the most cards get 30pts")
     print("- First to get 70pts wins!")
-    print("\n       Good luck!")
+    print(f"\n                Good luck, {name}!")
     print("\n" + "=" * 50 + "\n")
-    print(f"\nHello {name}, let's play Al-Komi!")
     
     players = []
     deck = Deck()
