@@ -4,11 +4,21 @@ import sys
 
 #Colette's class - text me if you guys have any questions
 class Deck:
-    '''docstring
-    '''
+    """"Represents the deck of cards in the game.
+    
+    Attributes: 
+        deck_cards (list): A list of cards in the deck.
+        player1_hand (list): Cards dealt to player 1.
+        player2_hand (list): Cards dealt to player 2.
+        table_hand (list): Cards on the table.
+    Raises:
+        ValueError: If the number of players is not 1.
+    """
     def __init__(self):
-        '''Initializes class attributes. 
-        '''
+        """Initializes the deck with 52 cards and empty hands for players.
+        Args:
+            self (Deck): The Deck instance.
+        """
         self.deck_cards = [
             '1H', '2H', '3H', '4H', '5H', '6H', '7H', '8H', '9H', '10H', 'JH', 
             'QH', 'KH', '1S', '2S', '3S', '4S', '5S', '6S', '7S', '8S', '9S', 
@@ -21,14 +31,25 @@ class Deck:
         self.table_hand = []
         
     def shuffle_deck(self):
-        '''Shuffles deck for the game. 
-        '''
+        """Shuffles the deck of cards.
+        Args:
+            self (Deck): The Deck instance.
+        """
         r.shuffle(self.deck_cards)
 
         
     def deal_cards(self, num_players): 
-        '''Deals cards to players and table. 
-        '''
+        """Deals cards to players and the table.
+
+        Args:
+            num_players (int): The number of players in the game.
+        Raises:
+            ValueError: If the number of players is not 1.
+
+        Returns:
+            tuple: A tuple containing the hands of player 1, player 2, and the 
+            table.
+        """
         #value error lines 
         if num_players != 1:
             raise ValueError("You have inputted an invalid number of players.")
@@ -62,33 +83,67 @@ class Deck:
         return self.player1_hand, self.player2_hand, self.table_hand 
 
 def match(cards_hand, cards_table):
+    """Finds matching cards in hand and table.
+
+    Args:
+        cards_hand (list): The player's hand.
+        cards_table (list): The cards on the table.
+    Raises:
+        ValueError: If the number of players is not 1.
+    Returns:
+        dict: A dictionary with the card from hand as the key and a list of 
+        matching cards from the table as the value.
+    Side effects:
+        Modifies the matched_dict dictionary.
+    """
     matched_dict = {}
     for card1 in cards_hand:
-        if card1 != "7D" and card1[:-1] != "J" and card1[:-1] != "K" and card1[:-1]\
-            != "Q":
+        if (card1 != "7D" and card1[:-1] != "J" and card1[:-1] != "K" and 
+            card1[:-1] != "Q"):
             temp_value = int(card1[:-1])
             for card2 in cards_table:
-                if card2 != "7D" and card2[:-1] != "J" and card2[:-1] != "K" and\
-                    card2[:-1] != "Q":
+                if (card2 != "7D" and card2[:-1] != "J" and card2[:-1] != "K" 
+                    and card2[:-1] != "Q"):
                     other_cards = list(cards_table)
                     other_cards.remove(card2)
                     if card1[:-1] == card2[:-1]: 
                         matched_dict[card1] = [card2]
                     for other in other_cards:
-                        if other != "7D" and other[:-1] != "J" and other[:-1] !=\
-                            "K" and other[:-1] != "Q":
+                        if (other != "7D" and other[:-1] != "J" and 
+                            other[:-1] != "K" and other[:-1] != "Q"):
                             otherother_cards = list(other_cards)
                             otherother_cards.remove(other)
                             if int(card2[:-1]) + int(other[:-1]) == temp_value:
                                 matched_dict[card1] = [card2, other]
                             for otherother in otherother_cards:
-                                if otherother != "7D" and otherother[:-1] != "J" and\
-                                otherother[:-1] != "K" and otherother[:-1] != "Q":
-                                    if int(card2[:-1]) + int(other[:-1]) + int(otherother[:-1]) == temp_value:
-                                        matched_dict[card1] = [card2, other, otherother]
+                                if (otherother != "7D" and 
+                                    otherother[:-1] != "J" and 
+                                    otherother[:-1] != "K" and 
+                                    otherother[:-1] != "Q"):
+                                    if (int(card2[:-1]) + int(other[:-1]) + 
+                                        int(otherother[:-1]) == temp_value):
+                                        matched_dict[card1] = [
+                                            card2, other, otherother
+                                        ]
     return matched_dict
 
 def evaluate_play(player, played_card, table_cards):
+    """Evaluates the played card and updates the player's hand and table cards.
+
+    Args:
+        player(Player): The player who played the card.
+        played_card (str): The card played by the player.
+        table_cards (list): The cards on the table.
+        
+        Raises:
+            ValueError: If the played card is not in the player's hand.
+
+    Returns:
+        tuple: A tuple containing the updated player's hand and table cards.
+        
+    Side effects:
+        Modifies the player's hand and the table cards.
+    """
     table_cards_num = []
     for card in table_cards:
         table_cards_num.append(card[:-1])
@@ -115,17 +170,41 @@ def evaluate_play(player, played_card, table_cards):
             return player.cards_in_hand, table_cards
             
 class Gamestate:
-    """Game state class."""
+    """Represents the current state of the game.
+    
+    Attributes:
+        players (list): A list of players in the game.
+        table_cards (list): The cards on the table.
+        current_turn (int): The index of the player whose turn it is.
+    
+    """
     def __init__(self, players, table_cards, current_turn=0):
+        """Initializes the game state with players, table cards, and current 
+        turn.
+        
+        Args:
+            players (list): A list of players in the game.
+            table_cards (list): The cards on the table.
+            current_turn (int): The index of the player whose turn it is.
+            
+        Side effects:
+            Modifies the players, table_cards, and current_turn attributes.
+       
+        """
         self.players = players
         self.table_cards = table_cards  
         self.current_turn = current_turn
     
     def __str__(self):
+        """ Returns a string representation of the current game state.
+        Returns:
+            str: A string representation of the current game state.
+        """
         return (
             f"Current turn: {self.players[self.current_turn].name}, "
             f"Table cards: {self.table_cards}, "
-            f"{self.players[self.current_turn].name}'s score: {self.players[self.current_turn].score}"
+            f"{self.players[self.current_turn].name}'s score: "
+            f"{self.players[self.current_turn].score}"
         )
 
     def next_turn(self):
@@ -135,7 +214,28 @@ class Gamestate:
         self.table_cards = table_cards   
 
 class Player():
+    """ Represents a player in the game.
+    
+    Attributes:
+        name (str): The name of the player.
+        cards_in_hand (list): The cards in the player's hand.
+        face_up (int): The number of face-up cards.
+        face_down (int): The number of face-down cards.
+        combo_dict (dict): A dictionary of card combinations.
+        score (int): The player's score.
+        
+    """ 
     def __init__(self, name, player_hand):
+        """ 
+        Initializes the player with a name and a hand of cards.
+        Args:
+            name (str): The name of the player.
+            player_hand (list): The cards in the player's hand.
+            
+        Side effects:
+            Modifies the name, cards_in_hand, face_up, face_down, 
+            combo_dict, and score attributes.
+        """ 
         self.name = name
         self.cards_in_hand = list(player_hand)
         self.face_up = 0
@@ -147,6 +247,14 @@ class Player():
         raise NotImplementedError
     
     def calc_score(self, opponent):
+        """Calculates the player's score based on the game rules.
+
+        Args:
+        opponent (Player): The opponent player.
+
+        Side effects:
+            Modifies the player's score based on the game rules.
+        """
         if self.face_up != 0:
             self.score += (self.face_up * 10)
             self.face_up -= (1 * self.face_up)
@@ -154,6 +262,15 @@ class Player():
             self.score += 30
 
     def determine_komi(self, cards, table_cards):
+        """ Determines the komi based on the played cards and table cards.
+
+        Args:
+            cards (list): The cards played by the player.
+            table_cards (list): The cards on the table.
+
+         Side effects:
+            Modifies the player's face_up attribute based on the game rules.
+    """
         if len(cards) == 1:
             temp_list = []
             for card in table_cards:
@@ -174,6 +291,15 @@ class Player():
                 self.face_up += 1 
     
     def add_face_down(self, played_card, table_cards):
+        """ Adds face-down cards based on the played card and table cards.
+
+    Args:
+        played_card (str): The card played by the player.
+        table_cards (list): The cards on the table.
+
+    Side effects:
+        Modifies the player's face_down attribute based on the game rules.
+    """
         if played_card in self.combo_dict:
             self.face_down += (1 + len(self.combo_dict[played_card]))
         if played_card == "JS" or played_card == "JD"\
@@ -185,7 +311,33 @@ class Player():
                     self.face_down += 2
     
 class HumanPlayer(Player):   
+    """ Represents a human player in the game.
+    
+    Attributes:
+        name (str): The name of the player.
+        cards_in_hand (list): The cards in the player's hand.
+        face_up (int): The number of face-up cards.
+        face_down (int): The number of face-down cards.
+        combo_dict (dict): A dictionary of card combinations.
+        score (int): The player's score.
+    """ 
     def turn(self, gamestate, table_cards):
+        """ Handles the player's turn by prompting for input and validating the
+        played card.
+
+        Args:
+            gamestate (Gamestate): The current game state.
+            table_cards (list): The cards on the table.
+
+        Raises:
+            ValueError: If the player inputs "exit".
+
+        Side effects:
+            Modifies the player's cards_in_hand and face_down attributes.
+
+        Returns:
+            str: The card played by the player.
+        """
         self.combo_dict = match(self.cards_in_hand, table_cards)
         print(gamestate)
         print(f"Your hand: {self.cards_in_hand}")
@@ -200,11 +352,36 @@ class HumanPlayer(Player):
                 return played
             else:
                 print("This card is not in your hand.")
-                played = input(f"{self.name}, please input the desired card from your "
-                        f"hand to play: ")
+                played = input(f"{self.name}, please input the desired card"
+                        f"from your hand to play: ")
                 
 class ComputerPlayer(Player):
+    """ Represents a computer player in the game.
+    
+    Attributes:
+        name (str): The name of the player.
+        cards_in_hand (list): The cards in the player's hand.
+        face_up (int): The number of face-up cards.
+        face_down (int): The number of face-down cards.
+        combo_dict (dict): A dictionary of card combinations.
+        score (int): The player's score.
+
+    Args:
+        Player (Player): The base class for the player.
+    """
     def turn (self, table_cards):
+        """ Handles the computer player's turn by selecting a card to play.
+
+        Args:
+            table_cards (list): The cards on the table.
+
+        Side effects:
+            Modifies the computer player's cards_in_hand and face_down 
+            attributes.
+
+        Returns:
+            str: The card played by the computer player.
+        """
         self.combo_dict = match(self.cards_in_hand, table_cards)
         if "7D" in self.cards_in_hand:
             self.determine_komi(["7D"], table_cards)
@@ -249,7 +426,27 @@ class ComputerPlayer(Player):
             return placed_card
         
 class Game:
+    """ Represents the game of Al-Komi.
+    
+    Attributes:
+        players (list): A list of players in the game.
+        player1 (Player): The first player.
+        player2 (Player): The second player.
+        table_cards (list): The cards on the table.
+        deck (Deck): The deck of cards used in the game.
+    """
     def __init__(self, players, table_cards, deck):
+        """ Initializes the game with players, table cards, and deck.
+
+        Args:
+            players (list): A list of players in the game.
+            table_cards (list): The cards on the table.
+            deck (Deck): The deck of cards used in the game.
+
+        Side effects:
+            Modifies the players, player1, player2, table_cards, and deck 
+            attributes.
+        """
         self.players = players
         self.player1 = players[0]
         self.player2 = players[1]
@@ -257,6 +454,14 @@ class Game:
         self.deck = deck
         
     def restart(self, gamestate):
+        """ Restarts the game by dealing new cards to the table.
+
+        Args:
+            gamestate (Gamestate): The current game state.
+
+        Side effects:
+            Modifies the table_cards attribute with new cards.
+        """
         if len(self.table_cards) == 0:
             wildcards = {'7D', 'JD', 'JH', 'JC', 'JS'}
             while len(self.table_cards) < 4:
@@ -271,14 +476,26 @@ class Game:
                     print("Error.")
             gamestate.update(self.table_cards)
     def refill(self, player):
+        """Refills the player's hand with new cards from the deck.
+
+        Args:
+            player (Player): The player whose hand needs to be refilled.
+
+        Side effects:
+            Modifies the player's cards_in_hand attribute with new cards.
+        """
         player.cards_in_hand = [self.deck.deck_cards.pop() for _ in range(4)]  
         
     def start(self):
+        """ Starts the game loop and handles player turns. """
         gamestate = Gamestate(self.players, self.table_cards)
-        while self.player1.score < 70 and self.player2.score < 70 and len(self.deck.deck_cards) >= 5:
+        while (self.player1.score < 70 and self.player2.score < 70 and 
+               len(self.deck.deck_cards) >= 5):
             if self.players[gamestate.current_turn] == self.player1:
                 played_card = self.player1.turn(gamestate, self.table_cards)
-                self.player1.cards_in_hand, self.table_cards = evaluate_play(self.player1, played_card, self.table_cards)
+                (self.player1.cards_in_hand, 
+                 self.table_cards) = evaluate_play(self.player1, played_card, 
+                                                   self.table_cards)
                 if len(self.table_cards) == 0:
                     self.restart(gamestate)
                 if len(self.player1.cards_in_hand) == 0:
@@ -288,7 +505,9 @@ class Game:
                 gamestate.next_turn()
             elif self.players[gamestate.current_turn] == self.player2:
                 played_card = self.player2.turn(self.table_cards)
-                self.player2.cards_in_hand, self.table_cards = evaluate_play(self.player2, played_card, self.table_cards)
+                (self.player2.cards_in_hand, 
+                 self.table_cards) = evaluate_play(self.player2, played_card, 
+                                                   self.table_cards)
                 if len(self.table_cards) == 0:
                     self.restart(gamestate)
                 if len(self.player2.cards_in_hand) == 0:
@@ -323,6 +542,18 @@ class Game:
 
                 
 def main(name):
+    """ Main function to start the game.
+    This function initializes the game with a human player and a computer
+    player, deals cards, and starts the game loop.
+    It also handles command-line arguments for the player's name.
+
+    Args:
+        name (str): The name of the human player.
+
+    Side effects:
+        Modifies the players list with the human player and computer player.
+        Initializes the game with the players and starts the game loop.
+    """
     players = []
     deck = Deck()
     num_players = len([name])
@@ -338,17 +569,16 @@ def main(name):
     game.start()
         
 def parse_args(arglist):
-    """Parse command-line arguments.
-    
-    Expects one mandatory command-line argument: a path to a text file where
-    each line consists of a name, a tab character, and a phone number.
-    
+    """ Parse command-line arguments.
+    This function uses argparse to handle command-line arguments for the
+    player's name. It provides help information and allows the user to
+    specify the player's name when running the script.
+
     Args:
-        name(str): player's name.
-        
+        arglist (list): A list of command-line arguments.
+
     Returns:
-        argparse.Namespace: a namespace object with a file attribute whose value
-        is a path to a text file as described above.
+        Namespace: A namespace object containing the parsed arguments.
     """
     parser = ArgumentParser()
     parser.add_argument("name", help="player name")
