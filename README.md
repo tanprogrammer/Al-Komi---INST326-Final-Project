@@ -5,18 +5,18 @@ Al-Komi is a digital Python-based implementation of a traditional Egyptian card 
 
 ## Files in Repository
 
-- 
+- README.md
+- AlKomi-Final-Script.py
 
-##  How to Run the Program 
-From your terminal, navigate to the project folder and run:
+##  How to Run this Program 
+This program takes command line arguments. Open the terminal and run the follwing: 
 
 _python3 Al_Komi.py {insert name}_
 
-**Note:**  __No command-line arguments are required.__
-
+## How to use this program
 **How to Play**
 * You will see your hand 
-* You’ll be prompted to choose a card from your hand (has to match the numbers on your hand; case sensitive)
+* You’ll be prompted to choose a card from your hand (has to match the numbers on your hand; **case sensitive**)
 * The computer will take its turn automatically.
 * The game continues until the deck is empty and a winner is declared.
 * Table cards, current scores, and your hand are displayed clearly every round.
