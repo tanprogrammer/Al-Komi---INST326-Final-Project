@@ -5,13 +5,13 @@ Al-Komi is a digital Python-based implementation of a traditional Egyptian card 
 
 ## Files in Repository
 
-- README.md
-- AlKomi-Final-Script.py
+- **README.md**: This file explains what the project is about, how to set it up, and how to run it. It gives background on the program and is meant to help anyone who wants to use or contribute to the code. It also has our sources and attributions
+- **AlKomi-Final-Script.py**: This is the main Python file where all the actual code lives. It has everything needed for the program to work—like the game logic, how the players behave, how the deck is handled, and how everything runs together.
 
 ##  How to Run this Program 
-This program takes command line arguments. Open the terminal and run the follwing: 
+This program takes one command line argument. Open the terminal and run the follwing: 
 
-_python3 Al_Komi.py {insert name}_
+_python3 AlKomi-Final-Script.py {insert name}_
 
 ## How to use this program
 **How to Play**
