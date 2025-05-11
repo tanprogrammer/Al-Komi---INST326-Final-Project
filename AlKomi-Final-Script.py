@@ -2,7 +2,7 @@ import random as r
 from argparse import ArgumentParser
 import sys
 
-#Colette's class - text me if you guys have any questions
+
 class Deck:
     """"Represents the deck of cards in the game.
     
@@ -196,16 +196,21 @@ class Gamestate:
         self.current_turn = current_turn
     
     def __str__(self):
-        """ Returns a string representation of the current game state.
+        """Returns a visually formatted string representation of the game state.
+        
         Returns:
-            str: A string representation of the current game state.
+            str: A multi-line, structured display of the current game state.
         """
+        current_player = self.players[self.current_turn]
         return (
-            f"Current turn: {self.players[self.current_turn].name}, "
-            f"Table cards: {self.table_cards}, "
-            f"{self.players[self.current_turn].name}'s score: "
-            f"{self.players[self.current_turn].score}"
+            "\n" + "=" * 50 +
+            f"\nCurrent Turn   : {current_player.name}"
+            f"\nPlayer Score   : {current_player.score}"
+            f"\nTable Cards    : {', '.join(self.table_cards)}"
+            "\n" + "=" * 50 + "\n"
         )
+
+
 
     def next_turn(self):
         self.current_turn = (self.current_turn + 1) % len(self.players)
@@ -259,7 +264,7 @@ class Player():
             self.score += (self.face_up * 10)
             self.face_up -= (1 * self.face_up)
         if self.face_down > opponent.face_down and self.score >= 40:
-            self.score += 30
+            self.score += 50
 
     def determine_komi(self, cards, table_cards):
         """ Determines the komi based on the played cards and table cards.
@@ -341,8 +346,7 @@ class HumanPlayer(Player):
         self.combo_dict = match(self.cards_in_hand, table_cards)
         print(gamestate)
         print(f"Your hand: {self.cards_in_hand}")
-        played = input(f"{self.name}, please input the desired card from your "
-                       f"hand to play: ")
+        played = input(f"{self.name}, play a card from your hand: ")
         if played == "exit":
             raise ValueError
         while True:
@@ -385,44 +389,44 @@ class ComputerPlayer(Player):
         self.combo_dict = match(self.cards_in_hand, table_cards)
         if "7D" in self.cards_in_hand:
             self.determine_komi(["7D"], table_cards)
-            print(f"{self.name} just played the 7D")
+            print(f"\n{self.name} just played the 7D")
             return "7D"
         elif "JH" in self.cards_in_hand or "JS" in self.cards_in_hand\
         or "JD" in self.cards_in_hand or "JC" in self.cards_in_hand:
             for card1 in self.cards_in_hand:
                 if card1 == "JH" or card1 == "JS" or card1 == "JD"\
                 or card1 == "JC":
-                    print(f"{self.name} just played the {card1}")
+                    print(f"\n{self.name} just played the {card1}")
                     return card1
         else:
             for card2 in self.cards_in_hand:
                 if card2[:-1] == "Q" or card2[:-1] == "K":
                     self.determine_komi([card2], table_cards)
                     self.face_down += 2
-                    print(f"{self.name} just played the {card2}")
+                    print(f"\n{self.name} just played the {card2}")
                     return card2
         if self.combo_dict != {}:
             for combo in self.combo_dict:
                 if len(self.combo_dict[combo]) == 3:
                     self.determine_komi(self.combo_dict[combo], table_cards)
                     self.face_down += 4
-                    print(f"{self.name} just played the {combo}")
+                    print(f"\n{self.name} just played the {combo}")
                     return combo
             for combo in self.combo_dict:
                 if len(self.combo_dict[combo]) == 2:
                     self.determine_komi(self.combo_dict[combo], table_cards)
                     self.face_down += 3
-                    print(f"{self.name} just played the {combo}")
+                    print(f"\n{self.name} just played the {combo}")
                     return combo
             for combo in self.combo_dict:
                 if len(self.combo_dict[combo]) == 1:
                     self.determine_komi(self.combo_dict[combo], table_cards)
                     self.face_down += 2
-                    print(f"{self.name} just played the {combo}")
+                    print(f"\n{self.name} just played {combo}")
                     return combo
         else:
             placed_card = self.cards_in_hand[0]
-            print(f"{self.name} just played the {placed_card}")
+            print(f"\n{self.name} just played the {placed_card}")
             return placed_card
         
 class Game:
@@ -487,27 +491,28 @@ class Game:
         player.cards_in_hand = [self.deck.deck_cards.pop() for _ in range(4)]  
         
     def start(self):
-        """ Starts the game loop and handles player turns. """
+        """ Starts the game loop and handles player turns.
+        """
         gamestate = Gamestate(self.players, self.table_cards)
         while (self.player1.score < 70 and self.player2.score < 70 and 
                len(self.deck.deck_cards) >= 5):
             if self.players[gamestate.current_turn] == self.player1:
                 played_card = self.player1.turn(gamestate, self.table_cards)
-                (self.player1.cards_in_hand, 
-                 self.table_cards) = evaluate_play(self.player1, played_card, 
-                                                   self.table_cards)
-                if len(self.table_cards) == 0:
-                    self.restart(gamestate)
-                if len(self.player1.cards_in_hand) == 0:
-                    self.refill(self.player1)
-                self.player1.calc_score(self.player2)
-                gamestate.update(self.table_cards)
-                gamestate.next_turn()
-            elif self.players[gamestate.current_turn] == self.player2:
+            (self.player1.cards_in_hand, 
+             self.table_cards) = evaluate_play(self.player1, played_card, 
+                               self.table_cards)
+            if len(self.table_cards) == 0:
+                self.restart(gamestate)
+            if len(self.player1.cards_in_hand) == 0:
+                self.refill(self.player1)
+            self.player1.calc_score(self.player2)
+            gamestate.update(self.table_cards)
+            gamestate.next_turn()
+            if self.players[gamestate.current_turn] == self.player2:
                 played_card = self.player2.turn(self.table_cards)
                 (self.player2.cards_in_hand, 
                  self.table_cards) = evaluate_play(self.player2, played_card, 
-                                                   self.table_cards)
+                                   self.table_cards)
                 if len(self.table_cards) == 0:
                     self.restart(gamestate)
                 if len(self.player2.cards_in_hand) == 0:
@@ -526,9 +531,9 @@ class Game:
             print(f"{self.player2.name}'s score: {self.player2.score}")
         else:
             if self.player1.face_down > self.player2.face_down:
-                self.player1.score += 30
+                self.player1.score += 50
             else:
-                self.player2.score += 30
+                self.player2.score += 50
             if self.player1.score > self.player2.score:
                 print(f"{self.player1.name} IS THE WINNER!")
                 print(f"{self.player1.name}'s score: {self.player1.score}")
@@ -539,6 +544,7 @@ class Game:
                 print(f"{self.player2.name}'s score: {self.player2.score}")
             else:
                 print("IT'S A TIE!")
+            print("IT'S A TIE!")
 
                 
 def main(name):
@@ -554,6 +560,19 @@ def main(name):
         Modifies the players list with the human player and computer player.
         Initializes the game with the players and starts the game loop.
     """
+    print("\n" + "=" * 50)
+    print(f"\n       Welcome to Al-Komi {name}!")
+    print("\nHow to Play:")
+    print("- Each player is dealt 4 cards.")
+    print("- On your turn, play a card from your hand.")
+    print("- Try to play a card that matches a number on the table or a sum of two cards.")
+    print("- Wild cards clear the table.")
+    print("- Player with the most cards get 30pts")
+    print("- First to get 70pts wins!")
+    print("\n       Good luck!")
+    print("\n" + "=" * 50 + "\n")
+    print(f"\nHello {name}, let's play Al-Komi!")
+    
     players = []
     deck = Deck()
     num_players = len([name])

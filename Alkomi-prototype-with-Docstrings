@@ -1,4 +1,4 @@
-# I meant docstrings 
+
 import random as r
 from argparse import ArgumentParser
 import sys
@@ -98,12 +98,12 @@ def match(cards_hand, cards_table):
     """
     matched_dict = {}
     for card1 in cards_hand:
-        # Use conditional expression for card filtering
+        #use conditional expression for card filtering
         temp_value = (int(card1[:-1]) if card1 != "7D" and card1[:-1] 
                       not in ["J", "K", "Q"] else None)
         if temp_value is not None:
             for card2 in cards_table:
-                # Use conditional expression for card filtering
+                #use conditional expression for card filtering
                 if card2 != "7D" and card2[:-1] not in ["J", "K", "Q"]:
                     other_cards = list(cards_table)
                     other_cards.remove(card2)
