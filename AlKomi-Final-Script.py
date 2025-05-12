@@ -544,7 +544,6 @@ class Game:
                 print(f"{self.player2.name}'s score: {self.player2.score}")
             else:
                 print("IT'S A TIE!")
-            print("IT'S A TIE!")
 
                 
 def main(name):
