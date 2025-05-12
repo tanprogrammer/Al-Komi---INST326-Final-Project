@@ -357,8 +357,7 @@ class HumanPlayer(Player):
                 return played
             else:
                 print("This card is not in your hand.")
-                played = input(f"{self.name}, please input the desired card"
-                        f"from your hand to play: ")
+                played = input(f"{self.name}, play a card from your hand: ")
                 
 class ComputerPlayer(Player):
     """ Represents a computer player in the game.
