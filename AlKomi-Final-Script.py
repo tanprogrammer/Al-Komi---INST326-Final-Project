@@ -357,8 +357,7 @@ class HumanPlayer(Player):
                 return played
             else:
                 print("This card is not in your hand.")
-                played = input(f"{self.name}, please input the desired card"
-                        f"from your hand to play: ")
+                played = input(f"{self.name}, play a card from your hand: ")
                 
 class ComputerPlayer(Player):
     """ Represents a computer player in the game.
@@ -532,9 +531,9 @@ class Game:
             print(f"{self.player2.name}'s score: {self.player2.score}")
         else:
             if self.player1.face_down > self.player2.face_down:
-                self.player1.score += 50
+                self.player1.score += 30
             else:
-                self.player2.score += 50
+                self.player2.score += 30
             if self.player1.score > self.player2.score:
                 print(f"{self.player1.name} IS THE WINNER!")
                 print(f"{self.player1.name}'s score: {self.player1.score}")
