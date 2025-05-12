@@ -23,7 +23,7 @@ _python3 AlKomi-Final-Script.py {insert name}_
 * If your hand becomes empty and the deck still has cards, you will be re-dealt automatically.
 
 ## How to interpret the terminal output 
-Background work in the script: When you play a turn, your card is first added to the table, then the computer takes a turn and their play is evaulated. After that the table is updated again for you to play again. If we had more time we wanted to work on printing this process to the terminal so the palyers have a clear idea of whats going on. 
+Background work in the script: When you play a turn, your card is first added to the table, then the computer takes a turn and their play is evaulated. After that the table is updated again for you to play again and those are the cards you see on the table after the computer's turn. If we had more time we wanted to work on printing this process to the terminal so the palyers have a clear idea of whats going on. 
 
 ## Anotated Biblography 
 EgyBasra – https://www.egybasra.com/
