@@ -265,7 +265,7 @@ class Player():
             self.score += (self.face_up * 10)
             self.face_up -= (1 * self.face_up)
         if self.face_down > opponent.face_down and self.score >= 40:
-            self.score += 50
+            self.score += 30
 
     def determine_komi(self, cards, table_cards):
         """ Determines the komi based on the played cards and table cards.
@@ -523,6 +523,7 @@ class Game:
                 gamestate.update(self.table_cards)
                 gamestate.next_turn()
         if self.player1.score >= 70:
+            print(f"\n       GAME OVER!")
             print(f"{self.player1.name} IS THE WINNER!")
             print(f"{self.player1.name}'s score: {self.player1.score}")
             print(f"{self.player2.name}'s score: {self.player2.score}")
@@ -530,11 +531,12 @@ class Game:
             print(f"{self.player2.name} IS THE WINNER!")
             print(f"{self.player1.name}'s score: {self.player1.score}")
             print(f"{self.player2.name}'s score: {self.player2.score}")
+            print(f"\n       Thank you for playing Al-komi!")
         else:
             if self.player1.face_down > self.player2.face_down:
-                self.player1.score += 50
+                self.player1.score += 30
             else:
-                self.player2.score += 50
+                self.player2.score += 30
             if self.player1.score > self.player2.score:
                 print(f"{self.player1.name} IS THE WINNER!")
                 print(f"{self.player1.name}'s score: {self.player1.score}")
@@ -545,7 +547,6 @@ class Game:
                 print(f"{self.player2.name}'s score: {self.player2.score}")
             else:
                 print("IT'S A TIE!")
-            print("IT'S A TIE!")
 
                 
 def main(name):
@@ -562,14 +563,14 @@ def main(name):
         Initializes the game with the players and starts the game loop.
     """
     print("\n" + "=" * 50)
-    print(f"\n       Welcome to Al-Komi {name}!")
+    print(f"\n       Welcome to Al-Komi, {name}!")
     print("\nHow to Play:")
     print("- Each player is dealt 4 cards.")
-    print("- On your turn, play a card from your hand.")
+    print("- On your turn, play a card from your hand (case sensitive e.g 7D instead of 7d).")
     print("- Try to play a card that matches a number on the table or a sum of two cards.")
-    print("- Wild cards clear the table.")
+    print("- Wild cards ('7D', 'JD', 'JH', 'JC', 'JS') clear the table.")
     print("- Player with the most cards get 30pts")
-    print("- First to get 70pts wins!")
+    print("- First to get 70pts wins! \n- Game ends when the deck is out of cards")
     print(f"\n                Good luck, {name}!")
     print("\n" + "=" * 50 + "\n")
     
