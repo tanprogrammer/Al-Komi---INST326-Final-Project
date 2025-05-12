@@ -526,7 +526,9 @@ class Game:
             print(f"{self.player1.name} IS THE WINNER!")
             print(f"{self.player1.name}'s score: {self.player1.score}")
             print(f"{self.player2.name}'s score: {self.player2.score}")
+            print(f"\n       Thank you for playing Al-komi!")
         elif self.player2.score >= 70:
+            print(f"\n       GAME OVER!")
             print(f"{self.player2.name} IS THE WINNER!")
             print(f"{self.player1.name}'s score: {self.player1.score}")
             print(f"{self.player2.name}'s score: {self.player2.score}")
