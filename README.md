@@ -9,7 +9,7 @@ Al-Komi is a digital Python-based implementation of a traditional Egyptian card 
 - **AlKomi-Final-Script.py**: This is the main Python file where all the actual code lives. It has everything needed for the program to work—like the game logic, how the players behave, how the deck is handled, and how everything runs together.
 
 ##  How to Run this Program 
-This program takes one command line argument. Open the terminal and run the follwing: 
+This program takes one command line argument, your name (single player only). Open the terminal and run the follwing: 
 
 _python3 AlKomi-Final-Script.py {insert name}_
 
@@ -22,7 +22,7 @@ _python3 AlKomi-Final-Script.py {insert name}_
 * Table cards, current scores, and your hand are displayed clearly every round.
 * If your hand becomes empty and the deck still has cards, you will be re-dealt automatically.
 
-Background work in the script: When you play a turn, your card is frist added to the table, then the computer takes a turn and their play is evaulated. After that the table is updated again for your to play again. If we had more time we wanted to work on printing this process to the terminal so the palyers have a clear idea of whats going on. 
+Background work in the script: When you play a turn, your card is first added to the table, then the computer takes a turn and their play is evaulated. After that the table is updated again for you to play again. If we had more time we wanted to work on printing this process to the terminal so the palyers have a clear idea of whats going on. 
 
 ## Anotated Biblography 
 EgyBasra – https://www.egybasra.com/
