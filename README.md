@@ -21,6 +21,7 @@ _python3 AlKomi-Final-Script.py {insert name}_
 * The game continues until the deck is empty and a winner is declared.
 * Table cards, current scores, and your hand are displayed clearly every round.
 * If your hand becomes empty and the deck still has cards, you will be re-dealt automatically.
+Background work in the script: When you play a turn, your card is frist added to the table, then the computer takes a turn and their play is evaulated. After that the table is updated again for your to play again. If we had more time we wanted to work on printing this process to the terminal so the palyers have a clear idea of whats going on. 
 
 ## Anotated Biblography 
 EgyBasra – https://www.egybasra.com/
