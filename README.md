@@ -28,7 +28,7 @@ Background work in the script: When you play a turn, your card is first added to
 ## Anotated Biblography 
 EgyBasra – https://www.egybasra.com/
 
-This website was used to understand the official rules, structure, and gameplay of the traditional Egyptian card game Basra (also known as Al-Komi). It helped us accurately implement the core mechanics, special card rules (like the 7 of Diamonds as a wildcard), scoring system, and general flow of the game in our Python version. 
+__This website was used to understand the official rules, structure, and gameplay of the traditional Egyptian card game Basra (also known as Al-Komi). It helped us accurately implement the core mechanics, special card rules (like the 7 of Diamonds as a wildcard), scoring system, and general flow of the game in our Python version.__ 
 
 ## Attributions 
 | **Method/Function**           | **Primary Author**    | **Techniques Demonstrated**              |
