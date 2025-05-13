@@ -33,11 +33,12 @@ _This website was used to understand the official rules, structure, and gameplay
 ## Attributions 
 | **Method/Function**           | **Primary Author**    | **Techniques Demonstrated**                             |
 |------------------------------|------------------------|----------------------------------------------------------|
-| deal_cards()                 | Colette Rouiller       | List comprehension, sequence unpacking                  |
-| __str__()                    | Micheas Kidane         | Magic method                                             |
-| calc_score()                 | Colette Rouiller       | Conditional expression                                   |
-| determine_komi()             | Leighwith MacAuley     | List comprehension, conditional expression               |
-| add_face_down()              | Leighwith MacAuley     | Conditional expression, generator expression             |
+| deal_cards()                 | Colette Rouiller       |  Sequence unpacking                  |
+| __str__()                    | Colette Rouiller        | Magic method                                             |
+| calc_score()                 | Leighwith MacAuley       | Conditional expression                                   |
+| build_board()                | Micheas Kidane     | f-string containing expression|
+| determine_komi()             | Micheas Kidane    | List comprehension               |
+| add_face_down()              | Leighwith MacAuley     |  Generator expression             |
 | ComputerPlayer.__init__()    | Jeffrey Tan            | Optional parameter (Unskillful), super method (Unskillful) |
 | ComputerPlayer.turn()        | Jeffrey Tan            | Set operation                                            |
 | refill()                     | Leighwith MacAuley     | List comprehension                                       |
