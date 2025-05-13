@@ -211,8 +211,6 @@ class Gamestate:
             "\n" + "=" * 50 + "\n"
         )
 
-
-
     def next_turn(self):
         self.current_turn = (self.current_turn + 1) % len(self.players)
         
@@ -264,8 +262,8 @@ class Player():
         if self.face_up != 0:
             self.score += (self.face_up * 10)
             self.face_up -= (1 * self.face_up)
-        if self.face_down > opponent.face_down and self.score >= 40:
-            self.score += 30
+        self.score += 30 if self.face_down > opponent.face_down and\
+        self.score >= 40 else 0
 
     def determine_komi(self, cards, table_cards):
         """ Determines the komi based on the played cards and table cards.
@@ -278,23 +276,19 @@ class Player():
             Modifies the player's face_up attribute based on the game rules.
     """
         if len(cards) == 1:
-            temp_list = []
-            for card in table_cards:
-                temp_list.append(card[:-1])
+            temp_list = [card[:-1] for card in table_cards]
             if cards == ["7D"]:
                 self.face_up += 1
             elif cards[0][:-1] in temp_list:
                 for value in temp_list:
                     if str(value) == str(cards[0][:-1]):
                         temp_list.remove(cards[0][:-1])
-            if len(temp_list) == 0:
-                self.face_up += 1
+            self.face_up += 1 if len(temp_list) == 0 else 0
         else:
             temp_list = table_cards.copy()
             for card in cards:
                 temp_list.remove(card)
-            if len(temp_list) == 0:
-                self.face_up += 1 
+            self.face_up += 1 if len(temp_list) == 0 else 0
     
     def add_face_down(self, played_card, table_cards):
         """ Adds face-down cards based on the played card and table cards.
@@ -306,15 +300,13 @@ class Player():
     Side effects:
         Modifies the player's face_down attribute based on the game rules.
     """
-        if played_card in self.combo_dict:
-            self.face_down += (1 + len(self.combo_dict[played_card]))
-        if played_card == "JS" or played_card == "JD"\
-        or played_card == "JH" or played_card == "JC":
-            self.face_down += len(table_cards)
-        elif played_card[:-1] == "K" or played_card[:-1] == "Q":
-            for card in table_cards:
-                if played_card == card:
-                    self.face_down += 2
+        self.face_down += 1 + len(self.combo_dict[played_card]) if played_card\
+        in self.combo_dict else 0
+        self.face_down += len(table_cards) if played_card == "JS" or\
+        played_card == "JD" else 0
+        if played_card[:-1] == "K" or played_card[:-1] == "Q":
+            self.face_down += sum(2 for card in table_cards if played_card 
+                                  == card)
     
 class HumanPlayer(Player):   
     """ Represents a human player in the game.
@@ -373,6 +365,19 @@ class ComputerPlayer(Player):
     Args:
         Player (Player): The base class for the player.
     """
+    def __init__(self, player_hand, name="Robot Bob"):
+        """ 
+        Initializes the Computer player with a name and a hand of cards.
+        Args:
+            name (str): The name of the Computer player.
+            player_hand (list): The cards in the player's hand.
+            
+        Side effects:
+            Modifies the name, cards_in_hand, face_up, face_down, 
+            combo_dict, and score attributes.
+        """ 
+        super().__init__(name, player_hand)
+        
     def turn (self, table_cards):
         """ Handles the computer player's turn by selecting a card to play.
 
@@ -399,12 +404,15 @@ class ComputerPlayer(Player):
                     print(f"\n{self.name} just played the {card1}")
                     return card1
         else:
-            for card2 in self.cards_in_hand:
-                if card2[:-1] == "Q" or card2[:-1] == "K":
-                    self.determine_komi([card2], table_cards)
-                    self.face_down += 2
-                    print(f"\n{self.name} just played the {card2}")
-                    return card2
+            set_hand_cards = set(self.cards_in_hand)
+            set_table_cards = set(table_cards)
+            set_same = set_hand_cards & set_table_cards
+            for card in set_same:
+               if card[:-1] == "Q" or card[:-1] == "K":
+                   self.determine_komi([card], table_cards)
+                   self.face_down += 2
+                   print(f"\n{self.name} just played the {card}")
+                   return card
         if self.combo_dict != {}:
             for combo in self.combo_dict:
                 if len(self.combo_dict[combo]) == 3:
@@ -498,15 +506,15 @@ class Game:
                len(self.deck.deck_cards) >= 5):
             if self.players[gamestate.current_turn] == self.player1:
                 played_card = self.player1.turn(gamestate, self.table_cards)
-            (self.player1.cards_in_hand, 
-             self.table_cards) = evaluate_play(self.player1, played_card, 
-                               self.table_cards)
-            if len(self.table_cards) == 0:
-                self.restart(gamestate)
-            if len(self.player1.cards_in_hand) == 0:
-                self.refill(self.player1)
-            self.player1.calc_score(self.player2)
-            gamestate.update(self.table_cards)
+                (self.player1.cards_in_hand, 
+                self.table_cards) = evaluate_play(self.player1, played_card, 
+                                self.table_cards)
+                if len(self.table_cards) == 0:
+                    self.restart(gamestate)
+                if len(self.player1.cards_in_hand) == 0:
+                    self.refill(self.player1)
+                self.player1.calc_score(self.player2)
+                gamestate.update(self.table_cards)
             gamestate.next_turn()
             if self.players[gamestate.current_turn] == self.player2:
                 played_card = self.player2.turn(self.table_cards)
@@ -581,11 +589,13 @@ def main(name):
     player1_hand, player2_hand, table_cards = deck.deal_cards(num_players)
     if num_players == 1:
         player = HumanPlayer(name, player1_hand)
-        com_player = ComputerPlayer("Robot Bob", player2_hand)
+        com_player = ComputerPlayer(player2_hand)
         players.append(player)
-        players.append(com_player)
+        players.append(com_player) 
+    elif num_players == 0:
+        player = HumanPlayer
     else:
-        ValueError ("Too many players.")
+        ValueError ("Invalid Number of Players.")
     game = Game(players, table_cards, deck)
     game.start()
         
