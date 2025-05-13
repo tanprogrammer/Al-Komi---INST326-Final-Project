@@ -31,20 +31,15 @@ EgyBasra – https://www.egybasra.com/
 _This website was used to understand the official rules, structure, and gameplay of the game. It helped us accurately implement the core mechanics, special card rules (like the 7 of Diamonds as a wildcard), scoring system, and general flow of the game in our Python version._
 
 ## Attributions 
-| **Method/Function**           | **Primary Author**    | **Techniques Demonstrated**              |
-|---------------------------|-------------------|--------------------------------------|
-| Deck.shuffle_deck()             | Colette Rouiller       |                        |
-| deal_cards()           | Colette Rouiller    | Sequence unpacking |
-| Computerplayer.turn()            | Jeffrey Tan  |  Set operations     |
-|refill          |    Leighwith   | Comprehensions or generator Expressions (list comprenshion)       |
-| evaluate_play()             | Micheas       |                       |
-| Gamestate.__str__         | Micheas   | magic method |
-| parse_args            | Leighwith  |  ArgumentParser class    |
-|          |       |     |
-|          |       |     |
-|          |       |     |
-|          |       |     |
-|          |       |     |
-|          |       |     |
-|          |       |     |
-|          |       |     |
+| **Method/Function**           | **Primary Author**    | **Techniques Demonstrated**                             |
+|------------------------------|------------------------|----------------------------------------------------------|
+| deal_cards()                 | Colette Rouiller       | List comprehension, sequence unpacking                  |
+| __str__()                    | Micheas Kidane         | Magic method                                             |
+| calc_score()                 | Colette Rouiller       | Conditional expression                                   |
+| determine_komi()             | Leighwith MacAuley     | List comprehension, conditional expression               |
+| add_face_down()              | Leighwith MacAuley     | Conditional expression, generator expression             |
+| ComputerPlayer.__init__()    | Jeffrey Tan            | Optional parameter (Unskillful), super method (Unskillful) |
+| ComputerPlayer.turn()        | Jeffrey Tan            | Set operation                                            |
+| refill()                     | Leighwith MacAuley     | List comprehension                                       |
+| parse_args()                 | Leighwith MacAuley     | ArgumentParser                                           |
+
