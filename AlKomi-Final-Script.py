@@ -21,11 +21,11 @@ class Deck:
         """
         
         self.deck_cards = [
-            '1H', '2H', '3H', '4H', '5H', '6H', '7H', '8H', '9H', '10H', 'JH', 
-            'QH', 'KH', '1S', '2S', '3S', '4S', '5S', '6S', '7S', '8S', '9S', 
-            '10S', 'JS', 'QS', 'KS','1C', '2C', '3C', '4C', '5C', '6C', '7C', 
-            '8C', '9C', '10C', 'JC', 'QC', 'KC', '1D', '2D', '3D', '4D', '5D', 
-            '6D', '7D', '8D', '9D', '10D', 'JD', 'QD', 'KD'
+            '1♥', '2♥', '3♥', '4♥', '5♥', '6♥', '7♥', '8♥', '9♥', '10♥', 'J♥', 
+            'Q♥', 'K♥', '1♠', '2♠', '3♠', '4♠', '5♠', '6♠', '7♠', '8♠', '9♠',
+            '10♠', 'J♠', 'Q♠', 'K♠','1♣', '2♣', '3♣', '4♣', '5♣', '6♣', '7♣', 
+            '8♣', '9♣', '10♣', 'J♣', 'Q♣', 'K♣', '1♦', '2♦', '3♦', '4♦', '5♦', 
+            '6♦', '7♦', '8♦', '9♦', '10♦', 'J♦', 'Q♦', 'K♦'
             ]
         self.player1_hand = []
         self.player2_hand = []
@@ -211,6 +211,39 @@ class Gamestate:
             "\n" + "=" * 50 + "\n"
         )
 
+    def build_card(self, card):
+        """
+        Creates a visual representation of a card.
+
+        Args:
+            card (str): The card.
+
+        Returns:
+            str: Lines that build the card shape.
+        """
+        return f"┌────┐\n│{card:<4}│\n└────┘"
+
+    def build_board(self):
+        """
+        Creates a visual of the game state.
+
+        Returns:
+            str: A string representing the game state visually.
+        """
+        current_player = self.players[self.current_turn]
+        card_rows = [self.build_card(card).split("\n") for card in self.table_cards]
+        if not card_rows:
+            table_display = "(No cards)"
+        else:
+            table_display = "\n".join("  ".join(parts) for parts in zip(*card_rows))
+        return (
+            "\n" + "=" * 50 +
+            f"\nCurrent Turn   : {current_player.name}"
+            f"\nPlayer Score   : {current_player.score}"
+            "\nTable Cards:\n" + table_display +
+            "\n" + "=" * 50 + "\n"
+        )
+        
     def next_turn(self):
         self.current_turn = (self.current_turn + 1) % len(self.players)
         
@@ -321,7 +354,7 @@ class HumanPlayer(Player):
     """ 
     def turn(self, gamestate, table_cards):
         """ Handles the player's turn by prompting for input and validating the
-        played card.
+        played card. Also 
 
         Args:
             gamestate (Gamestate): The current game state.
@@ -336,17 +369,30 @@ class HumanPlayer(Player):
         Returns:
             str: The card played by the player.
         """
+        
+        def convert_input_to_card(raw_input):
+            suits = {'H': '♥', 'S': '♠', 'C': '♣', 'D': '♦'}
+            raw_input = raw_input.upper().strip()
+            if len(raw_input) >= 2:
+                value = raw_input[:-1]
+                suit_letter = raw_input[-1]
+                if suit_letter in suits:
+                    return value + suits[suit_letter]
+            return None
+        
         self.combo_dict = match(self.cards_in_hand, table_cards)
-        print(gamestate)
+        print(gamestate.build_board())
+        print('♥ = H , ♠ = S, ♣ = C, ♦ = D')
         print(f"Your hand: {self.cards_in_hand}")
         played = input(f"{self.name}, play a card from your hand: ")
         if played == "exit":
             raise ValueError
         while True:
-            if played in self.cards_in_hand:
+            played_card = convert_input_to_card(played)
+            if played_card in self.cards_in_hand:
                 self.determine_komi([played], table_cards)
                 self.add_face_down(played, table_cards)
-                return played
+                return played_card
             else:
                 print("This card is not in your hand.")
                 played = input(f"{self.name}, play a card from your hand: ")
