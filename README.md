@@ -36,11 +36,9 @@ _This website was used to understand the official rules, structure, and gameplay
 | deal_cards()                 | Colette Rouiller       |  Sequence unpacking                  |
 | __str__()                    | Colette Rouiller        | Magic method                                             |
 | calc_score()                 | Leighwith MacAuley       | Conditional expression                                   |
-| build_board()                | Micheas Kidane     | f-string containing expression|
-| determine_komi()             | Micheas Kidane    | List comprehension               |
+| build_board()                | Micheas Kidane     | f-string containing expression|             |
 | add_face_down()              | Jeffrey Tan     |  Generator expression             |
-| ComputerPlayer.__init__()    | Jeffrey Tan            | Optional parameter (Unskillful), super method (Unskillful) |
 | ComputerPlayer.turn()        | Jeffrey Tan            | Set operation                                            |
-| refill()                     | Leighwith MacAuley     | List comprehension                                       |
+| refill()                     | Micheas Kidane     | List comprehension                                       |
 | parse_args()                 | Leighwith MacAuley     | ArgumentParser                                           |
 
