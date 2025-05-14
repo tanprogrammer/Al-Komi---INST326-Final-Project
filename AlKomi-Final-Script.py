@@ -156,7 +156,7 @@ def evaluate_play(player, played_card, table_cards):
     elif played_card == "7D" or played_card == "JC" or played_card == "JD"\
     or played_card == "JS" or played_card == "JH":
         player.cards_in_hand.remove(played_card)
-        table_cards = []
+        del table_cards[:]
         return player.cards_in_hand, table_cards
     else:
         if played_card[:-1] in table_cards_num:
@@ -351,26 +351,7 @@ class HumanPlayer(Player):
         face_down (int): The number of face-down cards.
         combo_dict (dict): A dictionary of card combinations.
         score (int): The player's score.
-        
     """ 
-    def convert_input_to_card(self, raw_input):
-        """Converts the suite representation into letters.
-        
-        Args:
-            raw_input (str): The person's played card in number and letter form. 
-        Side effects: 
-            Converts cards from letter into suite.
-        """
-        suits = {'H': '♥', 'S': '♠', 'C': '♣', 'D': '♦'}
-        raw_input = raw_input.upper().strip()
-        if len(raw_input) >= 2:
-            value = raw_input[:-1]
-            suit_letter = raw_input[-1]
-            if suit_letter in suits:
-                return value + suits[suit_letter]
-        else:
-            return None
-    
     def turn(self, gamestate, table_cards):
         """ Handles the player's turn by prompting for input and validating the
         played card. Also 
@@ -389,6 +370,16 @@ class HumanPlayer(Player):
             str: The card played by the player.
         """
         
+        def convert_input_to_card(raw_input):
+            suits = {'H': '♥', 'S': '♠', 'C': '♣', 'D': '♦'}
+            raw_input = raw_input.upper().strip()
+            if len(raw_input) >= 2:
+                value = raw_input[:-1]
+                suit_letter = raw_input[-1]
+                if suit_letter in suits:
+                    return value + suits[suit_letter]
+            return None
+        
         self.combo_dict = match(self.cards_in_hand, table_cards)
         print(gamestate.build_board())
         print('♥ = H , ♠ = S, ♣ = C, ♦ = D')
@@ -397,7 +388,7 @@ class HumanPlayer(Player):
         if played == "exit":
             raise ValueError
         while True:
-            played_card = self.convert_input_to_card(played)
+            played_card = convert_input_to_card(played)
             if played_card in self.cards_in_hand:
                 self.determine_komi([played], table_cards)
                 self.add_face_down(played, table_cards)
@@ -564,6 +555,7 @@ class Game:
                 (self.player1.cards_in_hand, 
                 self.table_cards) = evaluate_play(self.player1, played_card, 
                                 self.table_cards)
+                gamestate.update(self.table_cards)
                 if len(self.table_cards) == 0:
                     self.restart(gamestate)
                 if len(self.player1.cards_in_hand) == 0:
@@ -576,6 +568,7 @@ class Game:
                 (self.player2.cards_in_hand, 
                  self.table_cards) = evaluate_play(self.player2, played_card, 
                                    self.table_cards)
+                gamestate.update(self.table_cards)
                 if len(self.table_cards) == 0:
                     self.restart(gamestate)
                 if len(self.player2.cards_in_hand) == 0:
