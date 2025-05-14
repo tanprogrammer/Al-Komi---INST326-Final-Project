@@ -60,7 +60,7 @@ class Deck:
         #num cards per player/hand    
         hand_size = 4
         #now deal with wild cards in table hand (put as a set)
-        wildcards = {'7D', 'JD', 'JH', 'JC', 'JS'}
+        wildcards = {'7♦', 'J♦', 'J♥', 'J♣', 'J♠'}
         self.shuffle_deck()
         #table hand 
         while len(self.table_hand) < hand_size: #iteration requirement 
