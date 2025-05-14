@@ -377,7 +377,6 @@ class HumanPlayer(Player):
         if played_card == "exit":
             raise ValueError
         while True:
-            print(played_card)
             if played_card in self.cards_in_hand:
                 self.determine_komi([played_card], table_cards)
                 self.add_face_down(played_card, table_cards)
